@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Login - HealthCare Clinic</title>
+    <meta name="description" content="Doctor portal login for HealthCare Clinic">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="form-container">
+        <div class="form-wrapper">
+            <!-- Illustration Side -->
+            <div class="form-illustration" style="background: linear-gradient(135deg, #8b5cf6 0%, #2563eb 100%);">
+                <div class="illustration-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                </div>
+                <h2>Doctor Portal</h2>
+                <p>Access your dashboard to view all patient appointments and manage your clinic schedule efficiently.
+                </p>
+            </div>
+
+            <!-- Form Side -->
+            <div class="form-card">
+                <div class="form-header">
+                    <a href="/" class="logo mb-3" style="justify-content: center;">
+                        <div class="logo-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #2563eb 100%);">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                        </div>
+                    </a>
+                    <h1>Doctor Login</h1>
+                    <p>Access your appointment management dashboard</p>
+                </div>
+
+                <div id="formAlert" class="alert"></div>
+
+                <form id="doctorLoginForm">
+                    <div class="form-group">
+                        <label for="email">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            Email Address
+                        </label>
+                        <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Password
+                        </label>
+                        <input type="password" id="password" class="form-control" placeholder="Enter your password"
+                            required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary"
+                        style="width: 100%; background: linear-gradient(135deg, #8b5cf6 0%, #2563eb 100%);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        Access Dashboard
+                    </button>
+                </form>
+
+                <div class="form-footer">
+                    <a href="/">← Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+    <script>
+        // Redirect if already logged in as doctor
+        if (isLoggedIn()) {
+            const user = getUser();
+            if (user && user.role === 'doctor') {
+                window.location.href = '/doctor-dashboard.html';
+            }
+        }
+
+        document.getElementById('doctorLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideAlert('formAlert');
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<div class="spinner" style="width: 20px; height: 20px; border-width: 2px;"></div> Logging in...';
+            submitBtn.disabled = true;
+
+            try {
+                const data = await apiRequest('/auth/doctor/login', 'POST', { email, password });
+
+                setToken(data.token);
+                setUser(data);
+
+                showAlert('formAlert', 'Login successful! Redirecting...', 'success');
+                setTimeout(() => {
+                    window.location.href = '/doctor-dashboard.html';
+                }, 1000);
+            } catch (error) {
+                showAlert('formAlert', error.message);
+                submitBtn.innerHTML = 'Access Dashboard';
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>
